@@ -2,40 +2,150 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Controle Financeiro 3</title>
+  <title>Controle Financeiro</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
     body {
-      font-family: Arial, sans-serif;
-      margin: 40px;
+      font-family: 'Inter', sans-serif;
+      background-color: #f4f5f7;
+      color: #1f2937;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 50px 20px;
     }
-    input, button {
-      margin: 5px;
-      padding: 8px;
+
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 30px;
+      color: #111827;
     }
-    #registros {
-      margin-top: 20px;
+
+    .card {
+      background-color: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+      padding: 30px;
+      width: 100%;
+      max-width: 480px;
+      margin-bottom: 30px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 20px;
+    }
+
+    label {
+      font-weight: 600;
+      font-size: 0.9rem;
+      margin-bottom: 8px;
+    }
+
+    input {
+      padding: 12px;
+      font-size: 1rem;
+      border: 1px solid #d1d5db;
+      border-radius: 10px;
+      background-color: #f9fafb;
+      transition: 0.2s border-color, 0.2s background-color;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #6366f1;
+      background-color: #fff;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      font-size: 1rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 10px;
+      background-color: #10b981;
+      color: white;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    button:hover {
+      background-color: #059669;
+    }
+
+    .registros {
+      width: 100%;
+      max-width: 480px;
+    }
+
+    .registros h2 {
+      font-size: 1.2rem;
+      margin-bottom: 15px;
+      color: #374151;
+    }
+
+    .item {
+      background-color: #ffffff;
+      padding: 16px 20px;
+      border-radius: 12px;
+      margin-bottom: 10px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .item .descricao {
+      font-weight: 500;
+      color: #111827;
+    }
+
+    .item .valor {
+      font-weight: 600;
+      color: #10b981;
+    }
+
+    @media (max-width: 480px) {
+      .card, .registros {
+        padding: 20px;
+      }
     }
   </style>
 </head>
 <body>
-  <h1>Controle Financeiro</h1>
 
-  <label>Descrição:
-    <input type="text" id="descricao" />
-  </label>
-  <label>Valor:
-    <input type="number" id="valor" />
-  </label>
-  <button onclick="enviarDados()">Adicionar</button>
+  <h1>💸 Controle Financeiro</h1>
 
-  <h2>Registros</h2>
-  <div id="registros">Carregando...</div>
+  <div class="card">
+    <div class="form-group">
+      <label for="descricao">Descrição</label>
+      <input type="text" id="descricao" placeholder="Ex: Aluguel, Comida..." />
+    </div>
+    <div class="form-group">
+      <label for="valor">Valor</label>
+      <input type="number" id="valor" placeholder="Ex: 100.00" />
+    </div>
+    <button onclick="enviarDados()">Adicionar</button>
+  </div>
+
+  <div class="registros">
+    <h2>Registros</h2>
+    <div id="registros">Carregando...</div>
+  </div>
 
   <script>
-    // ✅ URL correta do seu Web App
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbzpc1o0Y4srXC5eVjG43oOSPbTzIVW1D7yTWv-uWNckPwoLJQGUWrnOb7d4hfGwg7sf2Q/exec';
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbyZXaG2G7H8IY6ZyRr5CYZRAplactdjCVUFRC023kbM0E6Bu3i8I4ixc36AnZWfI7JPmA/exec';
 
-    // Carrega os registros da planilha e exibe na tela
     async function carregarDados() {
       try {
         const resposta = await fetch(scriptURL + '?action=listar');
@@ -43,21 +153,30 @@
         const div = document.getElementById('registros');
         div.innerHTML = '';
 
-        dados.forEach((linha, index) => {
-          div.innerHTML += `<p>${index + 1}. ${linha.descricao} - R$ ${linha.valor} <small>(${linha.data})</small></p>`;
+        dados.forEach((linha) => {
+          div.innerHTML += `
+            <div class="item">
+              <span class="descricao">${linha.descricao}</span>
+              <span class="valor">R$ ${parseFloat(linha.valor).toFixed(2)}</span>
+            </div>`;
         });
       } catch (erro) {
         console.error('Erro ao carregar dados:', erro);
+        document.getElementById('registros').innerText = 'Erro ao carregar registros.';
       }
     }
 
-    // Envia novos dados para a planilha via Apps Script
     async function enviarDados() {
-      const descricao = encodeURIComponent(document.getElementById('descricao').value);
-      const valor = encodeURIComponent(document.getElementById('valor').value);
+      const descricao = document.getElementById('descricao').value.trim();
+      const valor = document.getElementById('valor').value.trim();
+
+      if (!descricao || !valor) {
+        alert('Preencha todos os campos!');
+        return;
+      }
 
       try {
-        await fetch(`${scriptURL}?action=adicionar&descricao=${descricao}&valor=${valor}`);
+        await fetch(`${scriptURL}?action=adicionar&descricao=${encodeURIComponent(descricao)}&valor=${encodeURIComponent(valor)}`);
         document.getElementById('descricao').value = '';
         document.getElementById('valor').value = '';
         carregarDados();
@@ -66,7 +185,6 @@
       }
     }
 
-    // Carrega os dados ao abrir a página
     carregarDados();
   </script>
 </body>
