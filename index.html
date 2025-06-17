@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Controle Financeiro</title>
+  <title>Controle Financeiro 2</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -18,7 +18,7 @@
   </style>
 </head>
 <body>
-  <h1>Controle Financeiro</h1>
+  <h1>Controle Financeiro 2</h1>
 
   <label>Descrição:
     <input type="text" id="descricao" />
@@ -32,35 +32,46 @@
   <div id="registros">Carregando...</div>
 
   <script>
+    // URL do seu Web App publicado no Google Apps Script
     const scriptURL = 'https://script.google.com/macros/s/AKfycbyZXaG2G7H8IY6ZyRr5CYZRAplactdjCVUFRC023kbM0E6Bu3i8I4ixc36AnZWfI7JPmA/exec';
 
+    // Função para carregar os dados da planilha e exibir no HTML
     async function carregarDados() {
-      const resposta = await fetch(scriptURL + '?action=listar');
-      const dados = await resposta.json();
-      const div = document.getElementById('registros');
-      div.innerHTML = '';
-      dados.forEach((linha, index) => {
-        div.innerHTML += `<p>${index + 1}. ${linha.descricao} - R$ ${linha.valor}</p>`;
-      });
+      try {
+        const resposta = await fetch(scriptURL + '?action=listar');
+        const dados = await resposta.json();
+        const div = document.getElementById('registros');
+        div.innerHTML = '';
+
+        dados.forEach((linha, index) => {
+          div.innerHTML += `<p>${index + 1}. ${linha.descricao} - R$ ${linha.valor}</p>`;
+        });
+      } catch (erro) {
+        console.error('Erro ao carregar dados:', erro);
+      }
     }
 
+    // Função para enviar dados para o Apps Script usando método GET
     async function enviarDados() {
-      const descricao = document.getElementById('descricao').value;
-      const valor = document.getElementById('valor').value;
+      const descricao = encodeURIComponent(document.getElementById('descricao').value);
+      const valor = encodeURIComponent(document.getElementById('valor').value);
 
-      await fetch(scriptURL, {
-        method: 'POST',
-        body: JSON.stringify({ descricao, valor }),
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
+      try {
+        // Envia os dados pela URL como parâmetros GET
+        await fetch(`${scriptURL}?action=adicionar&descricao=${descricao}&valor=${valor}`);
 
-      document.getElementById('descricao').value = '';
-      document.getElementById('valor').value = '';
-      carregarDados();
+        // Limpa os campos
+        document.getElementById('descricao').value = '';
+        document.getElementById('valor').value = '';
+
+        // Recarrega a lista após adicionar
+        carregarDados();
+      } catch (erro) {
+        console.error('Erro ao enviar dados:', erro);
+      }
     }
 
+    // Carrega os dados ao abrir a página
     carregarDados();
   </script>
 </body>
