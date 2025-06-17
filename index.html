@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Controle Financeiro</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+    }
+    input, button {
+      margin: 5px;
+      padding: 8px;
+    }
+    #registros {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Controle Financeiro</h1>
+
+  <label>Descrição:
+    <input type="text" id="descricao" />
+  </label>
+  <label>Valor:
+    <input type="number" id="valor" />
+  </label>
+  <button onclick="enviarDados()">Adicionar</button>
+
+  <h2>Registros</h2>
+  <div id="registros">Carregando...</div>
+
+  <script>
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbyZXaG2G7H8IY6ZyRr5CYZRAplactdjCVUFRC023kbM0E6Bu3i8I4ixc36AnZWfI7JPmA/exec';
+
+    async function carregarDados() {
+      const resposta = await fetch(scriptURL + '?action=listar');
+      const dados = await resposta.json();
+      const div = document.getElementById('registros');
+      div.innerHTML = '';
+      dados.forEach((linha, index) => {
+        div.innerHTML += `<p>${index + 1}. ${linha.descricao} - R$ ${linha.valor}</p>`;
+      });
+    }
+
+    async function enviarDados() {
+      const descricao = document.getElementById('descricao').value;
+      const valor = document.getElementById('valor').value;
+
+      await fetch(scriptURL, {
+        method: 'POST',
+        body: JSON.stringify({ descricao, valor }),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
+      document.getElementById('descricao').value = '';
+      document.getElementById('valor').value = '';
+      carregarDados();
+    }
+
+    carregarDados();
+  </script>
+</body>
+</html>
