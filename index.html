@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Controle Financeiro 2</title>
+  <title>Controle Financeiro 3</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -18,7 +18,7 @@
   </style>
 </head>
 <body>
-  <h1>Controle Financeiro 2</h1>
+  <h1>Controle Financeiro</h1>
 
   <label>Descrição:
     <input type="text" id="descricao" />
@@ -32,10 +32,10 @@
   <div id="registros">Carregando...</div>
 
   <script>
-    // URL do seu Web App publicado no Google Apps Script
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbyZXaG2G7H8IY6ZyRr5CYZRAplactdjCVUFRC023kbM0E6Bu3i8I4ixc36AnZWfI7JPmA/exec';
+    // ✅ URL correta do seu Web App
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbzpc1o0Y4srXC5eVjG43oOSPbTzIVW1D7yTWv-uWNckPwoLJQGUWrnOb7d4hfGwg7sf2Q/exec';
 
-    // Função para carregar os dados da planilha e exibir no HTML
+    // Carrega os registros da planilha e exibe na tela
     async function carregarDados() {
       try {
         const resposta = await fetch(scriptURL + '?action=listar');
@@ -44,27 +44,22 @@
         div.innerHTML = '';
 
         dados.forEach((linha, index) => {
-          div.innerHTML += `<p>${index + 1}. ${linha.descricao} - R$ ${linha.valor}</p>`;
+          div.innerHTML += `<p>${index + 1}. ${linha.descricao} - R$ ${linha.valor} <small>(${linha.data})</small></p>`;
         });
       } catch (erro) {
         console.error('Erro ao carregar dados:', erro);
       }
     }
 
-    // Função para enviar dados para o Apps Script usando método GET
+    // Envia novos dados para a planilha via Apps Script
     async function enviarDados() {
       const descricao = encodeURIComponent(document.getElementById('descricao').value);
       const valor = encodeURIComponent(document.getElementById('valor').value);
 
       try {
-        // Envia os dados pela URL como parâmetros GET
         await fetch(`${scriptURL}?action=adicionar&descricao=${descricao}&valor=${valor}`);
-
-        // Limpa os campos
         document.getElementById('descricao').value = '';
         document.getElementById('valor').value = '';
-
-        // Recarrega a lista após adicionar
         carregarDados();
       } catch (erro) {
         console.error('Erro ao enviar dados:', erro);
