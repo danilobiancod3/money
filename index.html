@@ -3,189 +3,97 @@
 <head>
   <meta charset="UTF-8">
   <title>Controle Financeiro</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    body {
-      font-family: 'Inter', sans-serif;
-      background-color: #f4f5f7;
-      color: #1f2937;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 50px 20px;
-    }
-
-    h1 {
-      font-size: 2.5rem;
-      margin-bottom: 30px;
-      color: #111827;
-    }
-
-    .card {
-      background-color: #ffffff;
-      border-radius: 16px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-      padding: 30px;
-      width: 100%;
-      max-width: 480px;
-      margin-bottom: 30px;
-    }
-
-    .form-group {
-      display: flex;
-      flex-direction: column;
-      margin-bottom: 20px;
-    }
-
-    label {
-      font-weight: 600;
-      font-size: 0.9rem;
-      margin-bottom: 8px;
-    }
-
-    input {
-      padding: 12px;
-      font-size: 1rem;
-      border: 1px solid #d1d5db;
-      border-radius: 10px;
-      background-color: #f9fafb;
-      transition: 0.2s border-color, 0.2s background-color;
-    }
-
-    input:focus {
-      outline: none;
-      border-color: #6366f1;
-      background-color: #fff;
-    }
-
-    button {
-      width: 100%;
-      padding: 12px;
-      font-size: 1rem;
-      font-weight: 600;
-      border: none;
-      border-radius: 10px;
-      background-color: #10b981;
-      color: white;
-      cursor: pointer;
-      transition: background-color 0.2s;
-    }
-
-    button:hover {
-      background-color: #059669;
-    }
-
-    .registros {
-      width: 100%;
-      max-width: 480px;
-    }
-
-    .registros h2 {
-      font-size: 1.2rem;
-      margin-bottom: 15px;
-      color: #374151;
-    }
-
-    .item {
-      background-color: #ffffff;
-      padding: 16px 20px;
-      border-radius: 12px;
-      margin-bottom: 10px;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .item .descricao {
-      font-weight: 500;
-      color: #111827;
-    }
-
-    .item .valor {
-      font-weight: 600;
-      color: #10b981;
-    }
-
-    @media (max-width: 480px) {
-      .card, .registros {
-        padding: 20px;
-      }
-    }
+    body { font-family: Arial; padding: 20px; }
+    table, th, td { border: 1px solid #000; border-collapse: collapse; padding: 5px; }
   </style>
 </head>
 <body>
 
-  <h1>💸 Controle Financeiro</h1>
+  <h2>Nova Entrada / Gasto</h2>
+  <form id="form">
+    <label>ID: <input type="number" id="id" required></label><br><br>
+    <label>Valor Total: <input type="number" id="valor_total" step="0.01" required></label><br><br>
+    <label>Data de Entrada: <input type="date" id="data_entrada"></label><br><br>
+    <label>Tipo: 
+      <select id="tipo">
+        <option value="Entrada">Entrada</option>
+        <option value="Gasto">Gasto</option>
+      </select>
+    </label><br><br>
+    <label>Nome: <input type="text" id="nome" required></label><br><br>
+    <label>Valor Item: <input type="number" id="valor_item" step="0.01"></label><br><br>
+    <label>Parcela: <input type="text" id="parcela"></label><br><br>
+    <label>Valor Parcela: <input type="number" id="valor_parcela" step="0.01"></label><br><br>
+    <button type="submit">Salvar</button>
+  </form>
 
-  <div class="card">
-    <div class="form-group">
-      <label for="descricao">Descrição</label>
-      <input type="text" id="descricao" placeholder="Ex: Aluguel, Comida..." />
-    </div>
-    <div class="form-group">
-      <label for="valor">Valor</label>
-      <input type="number" id="valor" placeholder="Ex: 100.00" />
-    </div>
-    <button onclick="enviarDados()">Adicionar</button>
-  </div>
+  <hr>
 
-  <div class="registros">
-    <h2>Registros</h2>
-    <div id="registros">Carregando...</div>
-  </div>
+  <h2>Registros da Planilha</h2>
+  <table id="tabela">
+    <thead>
+      <tr>
+        <th>ID</th><th>Valor Total</th><th>Data</th><th>Data Entrada</th>
+        <th>Tipo</th><th>Nome</th><th>Valor Item</th><th>Parcela</th><th>Valor Parcela</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
 
   <script>
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbyZXaG2G7H8IY6ZyRr5CYZRAplactdjCVUFRC023kbM0E6Bu3i8I4ixc36AnZWfI7JPmA/exec';
+    const form = document.getElementById('form');
+    const tabela = document.querySelector('#tabela tbody');
+    const url = "https://script.google.com/macros/s/AKfycbwcEE0bX_uSRDoLfhipkjTl38guUCRZMtUkozX82uHaSlnW4-EWHI9NI7aaiDeJLPeD2Q/exec";
 
-    async function carregarDados() {
-      try {
-        const resposta = await fetch(scriptURL + '?action=listar');
-        const dados = await resposta.json();
-        const div = document.getElementById('registros');
-        div.innerHTML = '';
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
 
-        dados.forEach((linha) => {
-          div.innerHTML += `
-            <div class="item">
-              <span class="descricao">${linha.descricao}</span>
-              <span class="valor">R$ ${parseFloat(linha.valor).toFixed(2)}</span>
-            </div>`;
-        });
-      } catch (erro) {
-        console.error('Erro ao carregar dados:', erro);
-        document.getElementById('registros').innerText = 'Erro ao carregar registros.';
-      }
+      const dados = {
+        id: document.getElementById('id').value,
+        valor_total: parseFloat(document.getElementById('valor_total').value),
+        data_entrada: document.getElementById('data_entrada').value,
+        tipo: document.getElementById('tipo').value,
+        nome: document.getElementById('nome').value,
+        valor_item: parseFloat(document.getElementById('valor_item').value),
+        parcela: document.getElementById('parcela').value,
+        valor_parcela: parseFloat(document.getElementById('valor_parcela').value)
+      };
+
+      await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(dados)
+      });
+
+      alert("Enviado com sucesso!");
+      form.reset();
+      carregarTabela();
+    });
+
+    async function carregarTabela() {
+      const res = await fetch(url);
+      const dados = await res.json();
+
+      tabela.innerHTML = '';
+      dados.forEach(r => {
+        const row = `<tr>
+          <td>${r.id}</td>
+          <td>${r.valor_total}</td>
+          <td>${new Date(r.data).toLocaleDateString()}</td>
+          <td>${r.data_entrada}</td>
+          <td>${r.tipo}</td>
+          <td>${r.nome}</td>
+          <td>${r.valor_item}</td>
+          <td>${r.parcela}</td>
+          <td>${r.valor_parcela}</td>
+        </tr>`;
+        tabela.innerHTML += row;
+      });
     }
 
-    async function enviarDados() {
-      const descricao = document.getElementById('descricao').value.trim();
-      const valor = document.getElementById('valor').value.trim();
-
-      if (!descricao || !valor) {
-        alert('Preencha todos os campos!');
-        return;
-      }
-
-      try {
-        await fetch(`${scriptURL}?action=adicionar&descricao=${encodeURIComponent(descricao)}&valor=${encodeURIComponent(valor)}`);
-        document.getElementById('descricao').value = '';
-        document.getElementById('valor').value = '';
-        carregarDados();
-      } catch (erro) {
-        console.error('Erro ao enviar dados:', erro);
-      }
-    }
-
-    carregarDados();
+    carregarTabela(); // inicial
   </script>
+
 </body>
 </html>
