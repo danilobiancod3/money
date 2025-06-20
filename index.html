@@ -12,14 +12,12 @@
 
   <h2>Nova Entrada / Gasto</h2>
   <form id="form">
+    <!-- campos como antes -->
     <label>ID: <input type="number" id="id" required></label><br><br>
     <label>Valor Total: <input type="number" id="valor_total" step="0.01" required></label><br><br>
     <label>Data de Entrada: <input type="date" id="data_entrada"></label><br><br>
     <label>Tipo: 
-      <select id="tipo">
-        <option value="Entrada">Entrada</option>
-        <option value="Gasto">Gasto</option>
-      </select>
+      <select id="tipo"><option value="Entrada">Entrada</option><option value="Gasto">Gasto</option></select>
     </label><br><br>
     <label>Nome: <input type="text" id="nome" required></label><br><br>
     <label>Valor Item: <input type="number" id="valor_item" step="0.01"></label><br><br>
@@ -46,9 +44,8 @@
     const tabela = document.querySelector('#tabela tbody');
     const url = "https://script.google.com/macros/s/AKfycby2aGAyc5QJwCm2lmXDIE3fzsMq8UaRMMkTFJEcgJgxuLUPghiigIz8y8HHPNqUQ0mwiA/exec";
 
-    form.addEventListener('submit', async (e) => {
+    form.addEventListener('submit', async e => {
       e.preventDefault();
-
       const dados = {
         id: document.getElementById('id').value,
         valor_total: parseFloat(document.getElementById('valor_total').value),
@@ -62,7 +59,7 @@
 
       await fetch(url, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
         body: JSON.stringify(dados)
       });
 
@@ -74,10 +71,9 @@
     async function carregarTabela() {
       const res = await fetch(url);
       const dados = await res.json();
-
       tabela.innerHTML = '';
       dados.forEach(r => {
-        const row = `<tr>
+        tabela.innerHTML += `<tr>
           <td>${r.id}</td>
           <td>${r.valor_total}</td>
           <td>${new Date(r.data).toLocaleDateString()}</td>
@@ -88,11 +84,10 @@
           <td>${r.parcela}</td>
           <td>${r.valor_parcela}</td>
         </tr>`;
-        tabela.innerHTML += row;
       });
     }
 
-    carregarTabela(); // inicial
+    carregarTabela();
   </script>
 
 </body>
