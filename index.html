@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="images/icon_azul.png" type="image/png">
+    <title>Money - Controle Financeiro Descomplicado</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --light-blue: #00B8F4;
+            --medium-blue: #007ACD;
+            --dark-blue: #004D92;
+            --text-color: #333;
+            --bg-light: #f8f8f8;
+            --white: #fff;
+            --shadow-light: 0 4px 12px rgba(0, 0, 0, 0.07);
+            --shadow-medium: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--bg-light);
+            scroll-behavior: smooth;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 25px;
+        }
+
+        /* Header */
+        header {
+            background-color: var(--dark-blue);
+            color: var(--white);
+            padding: 40px 0 60px; /* Increased padding-bottom */
+            text-align: center;
+            position: relative;
+            overflow: hidden; /* To contain potential floating elements */
+        }
+
+        .download-top {
+            position: absolute;
+            top: 30px; /* Slightly more space from top */
+            right: 30px; /* Slightly more space from right */
+            background-color: var(--light-blue);
+            color: var(--white);
+            padding: 12px 25px; /* Slightly larger button */
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: var(--shadow-light);
+            z-index: 10; /* Ensure it's above other elements */
+        }
+
+        .download-top:hover {
+            background-color: var(--medium-blue);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        header img {
+            width: 120px; /* Slightly larger logo */
+            height: 120px;
+            border-radius: 25%; /* Soften corners for the logo */
+            margin-bottom: 25px; /* More space below logo */
+            box-shadow: var(--shadow-light);
+        }
+
+        header h1 {
+            font-size: 3.2em; /* Larger heading */
+            margin-bottom: 15px;
+            font-weight: 700;
+            letter-spacing: -0.03em; /* Tighter letter spacing */
+        }
+
+        header p {
+            font-size: 1.25em; /* Larger tagline */
+            font-weight: 300;
+            max-width: 700px; /* Wider tagline for better readability */
+            margin: 0 auto;
+            opacity: 0.9; /* Slightly less opaque for a softer look */
+        }
+
+        /* Sections */
+        section {
+            padding: 100px 0; /* More vertical padding */
+            text-align: center;
+        }
+
+        section:nth-of-type(even) {
+            background-color: var(--white);
+        }
+
+        section h2 {
+            font-size: 2.8em; /* Larger section titles */
+            margin-bottom: 50px; /* More space below title */
+            color: var(--medium-blue);
+            font-weight: 600;
+            position: relative;
+            display: inline-block; /* To allow pseudo-elements to size correctly */
+        }
+
+        section h2::after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 4px;
+            background-color: var(--light-blue);
+            margin: 15px auto 0;
+            border-radius: 2px;
+        }
+
+        /* Description */
+        .description-content {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 40px; /* More space between items */
+            max-width: 1000px; /* Allow wider content */
+            margin: 0 auto;
+        }
+
+        .description-item {
+            flex: 1 1 300px; /* Optimal sizing for items */
+            background-color: var(--white);
+            padding: 35px; /* More padding inside items */
+            border-radius: 12px; /* Softer border-radius */
+            box-shadow: var(--shadow-light); /* Lighter shadow */
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            text-align: left; /* Align text left within cards */
+        }
+
+        .description-item:hover {
+            transform: translateY(-8px); /* More pronounced hover effect */
+            box-shadow: var(--shadow-medium); /* Darker shadow on hover */
+        }
+
+        .description-item h3 {
+            color: var(--dark-blue);
+            margin-bottom: 15px;
+            font-size: 1.6em; /* Larger item titles */
+            font-weight: 600;
+        }
+
+        .description-item p {
+            font-size: 1.05em;
+            color: #555;
+        }
+
+        /* Gallery */
+        #screenshots {
+            background-color: var(--bg-light);
+            padding-bottom: 80px; /* Match other sections */
+        }
+
+        .screenshot-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            justify-content: center;
+        }
+
+        .screenshot-item img {
+            width: 100%;
+            border-radius: 12px; /* Softer border-radius */
+            box-shadow: var(--shadow-medium); /* More prominent shadow for images */
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .screenshot-item img:hover {
+            transform: scale(1.02); /* Slight zoom on hover */
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+        }
+
+        /* Download Section */
+        #download {
+            background-color: var(--dark-blue);
+            color: var(--white);
+            padding: 80px 0; /* Consistent padding */
+        }
+
+        #download h2 {
+            color: var(--white);
+        }
+
+        .download-buttons-wrapper {
+            margin-top: 40px; /* Space above buttons */
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 25px; /* Space between buttons */
+        }
+
+        .download-button, .github-button {
+            display: inline-flex; /* Use flex for alignment with icon */
+            align-items: center; /* Vertically align icon and text */
+            justify-content: center; /* Center content horizontally */
+            background-color: var(--light-blue);
+            color: var(--white);
+            padding: 18px 40px; /* Larger padding for buttons */
+            border-radius: 50px;
+            text-decoration: none;
+            font-size: 1.4em; /* Larger font size */
+            font-weight: 700;
+            transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: var(--shadow-medium); /* More pronounced shadow */
+            min-width: 250px; /* Ensure buttons have a minimum width */
+        }
+
+        .download-button:hover, .github-button:hover {
+            background-color: var(--medium-blue);
+            transform: translateY(-5px); /* Stronger lift effect */
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .download-button svg, .github-button svg {
+            margin-right: 10px; /* Space between icon and text */
+            fill: currentColor; /* Inherit color from text */
+        }
+
+        /* Instructions */
+        .instructions {
+            max-width: 850px; /* Slightly wider instructions */
+            margin: 60px auto 0; /* More space above instructions */
+            text-align: left;
+            background: var(--white);
+            padding: 30px; /* More padding */
+            border-radius: 12px;
+            box-shadow: var(--shadow-light);
+            border-left: 5px solid var(--medium-blue); /* Add a subtle left border */
+        }
+
+        .instructions h3 {
+            color: var(--dark-blue);
+            margin-bottom: 20px; /* More space below heading */
+            font-size: 1.5em; /* Larger heading */
+            font-weight: 600;
+        }
+
+        .instructions p {
+            margin-bottom: 12px; /* Consistent spacing */
+            font-size: 1.05em;
+            line-height: 1.7; /* Better line spacing for readability */
+        }
+        
+        .instructions p strong {
+            color: var(--medium-blue); /* Highlight important text */
+        }
+
+
+        /* Footer */
+        footer {
+            background-color: var(--text-color);
+            color: var(--white);
+            padding: 50px 0; /* More padding */
+            text-align: center;
+            font-size: 1em; /* Slightly larger font */
+        }
+
+        footer a {
+            color: var(--light-blue);
+            text-decoration: none;
+            margin: 0 15px; /* More space between links */
+            transition: color 0.3s ease, text-decoration 0.3s ease;
+        }
+
+        footer a:hover {
+            color: var(--white);
+            text-decoration: underline;
+        }
+
+        footer p {
+            margin-top: 15px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .container {
+                padding: 0 20px;
+            }
+
+            header h1 {
+                font-size: 2.8em;
+            }
+
+            header p {
+                font-size: 1.1em;
+            }
+
+            section h2 {
+                font-size: 2.4em;
+            }
+
+            .description-item {
+                flex: 1 1 280px;
+            }
+
+            .download-button, .github-button {
+                font-size: 1.3em;
+                padding: 16px 35px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .download-top {
+                position: relative; /* Make it flow with content */
+                top: auto;
+                right: auto;
+                margin: 20px auto 0; /* Center it below the header text */
+                display: block; /* Take full width for easier tap */
+                max-width: 200px; /* Limit its width */
+                padding: 12px 20px; /* Smaller padding */
+                font-size: 1.1em;
+            }
+
+            header {
+                padding: 30px 0 50px;
+            }
+
+            header h1 {
+                font-size: 2.4em;
+            }
+
+            header p {
+                font-size: 1em;
+            }
+
+            section {
+                padding: 70px 0;
+            }
+
+            section h2 {
+                font-size: 2em;
+                margin-bottom: 40px;
+            }
+
+            .description-item {
+                flex: 1 1 90%; /* Stack items on small screens */
+            }
+
+            .screenshot-gallery {
+                grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); /* Smaller grid items */
+            }
+
+            .download-button, .github-button {
+                font-size: 1.1em;
+                padding: 14px 30px;
+                min-width: unset; /* Remove min-width for flexibility */
+            }
+
+            .instructions {
+                margin: 40px auto 0;
+                padding: 25px;
+            }
+
+            .instructions h3 {
+                font-size: 1.3em;
+            }
+
+            .instructions p {
+                font-size: 0.95em;
+            }
+        }
+
+        @media (max-width: 480px) {
+            header h1 {
+                font-size: 2em;
+            }
+
+            header p {
+                font-size: 0.9em;
+            }
+
+            section {
+                padding: 50px 0;
+            }
+
+            section h2 {
+                font-size: 1.8em;
+            }
+            .download-button, .github-button {
+                flex-direction: column; /* Stack icon and text */
+                gap: 5px; /* Space between stacked elements */
+                padding: 12px 20px;
+                font-size: 1em;
+            }
+            .download-button svg, .github-button svg {
+                margin-right: 0;
+                margin-bottom: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="#download" class="download-top">Baixar APK</a>
+        <img src="https://via.placeholder.com/120x120.png?text=Logo" alt="Ícone do App">
+        <h1><img src="images/icon_azul.png" width="20" style="vertical-align: middle; margin-right: 4px;"> Money</h1>
+        <p>Seu app de controle financeiro ainda mais fácil. Ainda em desenvolvimento, mas já funcional!</p>
+    </header>
+
+    <main>
+        <section id="description">
+            <div class="container">
+                <h2>Sobre o App</h2>
+                <div class="description-content">
+                    <div class="description-item">
+                        <h3>Visão Clara dos Seus Gastos</h3>
+                        <p>O <strong>Money</strong> simplifica o registro de despesas, permitindo que você categorize cada gasto para ter uma visão clara de onde seu dinheiro está sendo direcionado. Diga adeus às surpresas no final do mês!</p>
+                    </div>
+                    <div class="description-item">
+                        <h3>Organização e Planejamento</h3>
+                        <p>Com o Money, você pode organizar suas finanças, definir orçamentos para diferentes categorias e acompanhar seu progresso. É a ferramenta ideal para quem busca mais controle e menos preocupação.</p>
+                    </div>
+                    <div class="description-item">
+                        <h3>Desenvolvimento Contínuo</h3>
+                        <p>O <strong>Money</strong> está em fase inicial, mas já oferece funcionalidades essenciais. Estamos em constante aprimoramento, com base em feedback, para entregar a melhor experiência de controle financeiro.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="screenshots">
+            <div class="container">
+                <h2>Telas do Aplicativo</h2>
+                <div class="screenshot-gallery">
+                    <div class="screenshot-item"><img src="https://via.placeholder.com/300x550/00B8F4/FFFFFF?text=Tela+Inicial" alt="Tela inicial do aplicativo"></div>
+                    <div class="screenshot-item"><img src="https://via.placeholder.com/300x550/007ACD/FFFFFF?text=Registro+Gasto" alt="Tela de registro de gastos"></div>
+                    <div class="screenshot-item"><img src="https://via.placeholder.com/300x550/004D92/FFFFFF?text=Relat%C3%B3rio" alt="Tela de relatórios"></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="download">
+            <div class="container">
+                <h2>Baixe e Teste Agora</h2>
+                <div class="download-buttons-wrapper">
+                    <a href="apk/Money.apk" class="download-button" download>
+                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#FFFFFF"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+                        Baixar APK
+                    </a>
+                    <a href="https://github.com/danilobiancod3/money_app" class="github-button" target="_blank">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#FFFFFF"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.087-.731.084-.716.084-.716 1.205.086 1.838 1.238 1.838 1.238 1.07 1.835 2.809 1.305 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.118-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.602.802.573 4.765-1.589 8.197-6.094 8.197-11.387c0-6.627-5.372-12-12-12z"/></svg>
+                        Ver Projeto no GitHub
+                    </a>
+                </div>
+
+                <div class="instructions">
+                    <h3>Como instalar o APK no Android:</h3>
+                    <p style="color: #000;">1. Toque no botão "Baixar APK" acima.</p>
+                    <p style="color: #000;">2. Após o download, abra o arquivo <strong>Money.apk</strong> no seu gerenciador de arquivos ou notificações.</p>
+                    <p style="color: #000;">3. Caso apareça um aviso de segurança sobre "Fontes Desconhecidas", toque em <strong>"Configurações"</strong> e ative <strong>"Permitir desta fonte"</strong> (o texto pode variar ligeiramente dependendo do seu Android).</p>
+                    <p style="color: #000;">4. Volte e confirme a instalação.</p>
+                    <p style="color: #000;"><strong>Pronto!</strong> O app estará disponível na sua lista de aplicativos para você começar a controlar suas finanças.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>Desenvolvido por <a href="https://danilobiancod3.github.io/danilo" target="_blank">Danilo Gregorio Bianco</a></p>
+            <p>&copy; 2025 - Money App. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+</body>
+</html>
