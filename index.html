@@ -7,6 +7,7 @@
     <title>Money - Controle Financeiro Descomplicado</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
+        /* Variáveis CSS para cores e sombras, facilitando a manutenção e padronização */
         :root {
             --light-blue: #00B8F4;
             --medium-blue: #007ACD;
@@ -16,101 +17,125 @@
             --white: #fff;
             --shadow-light: 0 4px 12px rgba(0, 0, 0, 0.07);
             --shadow-medium: 0 8px 25px rgba(0, 0, 0, 0.15);
+            --shadow-strong: 0 12px 30px rgba(0, 0, 0, 0.25);
         }
 
+        /* Reset básico para remover margens e paddings padrão do navegador */
         * {
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
+            box-sizing: border-box; /* Inclui padding e borda no tamanho total do elemento */
         }
 
+        /* Estilos globais do corpo da página */
         body {
             font-family: 'Poppins', sans-serif;
-            line-height: 1.6;
+            line-height: 1.6; /* Altura da linha para melhor legibilidade */
             color: var(--text-color);
             background-color: var(--bg-light);
-            scroll-behavior: smooth;
+            scroll-behavior: smooth; /* Rolagem suave ao clicar em links âncora */
         }
 
+        /* Estilo para o contêiner central que limita a largura do conteúdo */
         .container {
             max-width: 1100px;
-            margin: 0 auto;
-            padding: 0 25px;
+            margin: 0 auto; /* Centraliza o contêiner na página */
+            padding: 0 25px; /* Espaçamento interno horizontal para não colar nas bordas */
         }
 
-        /* Header */
+        /* Estilos do Cabeçalho (Header) */
         header {
             background-color: var(--dark-blue);
             color: var(--white);
-            padding: 40px 0 60px; /* Increased padding-bottom */
+            padding: 40px 0 60px; /* Mais padding inferior para espaço visual */
             text-align: center;
             position: relative;
-            overflow: hidden; /* To contain potential floating elements */
+            overflow: hidden; /* Garante que elementos filhos não vazem, como o botão top */
         }
 
+        /* Botão "Baixar APK" no canto superior direito do header */
         .download-top {
             position: absolute;
-            top: 30px; /* Slightly more space from top */
-            right: 30px; /* Slightly more space from right */
+            top: 30px;
+            right: 30px;
             background-color: var(--light-blue);
             color: var(--white);
-            padding: 12px 25px; /* Slightly larger button */
+            padding: 12px 25px;
             border-radius: 30px;
             text-decoration: none;
             font-weight: 600;
-            transition: background-color 0.3s ease, transform 0.2s ease;
+            transition: background-color 0.3s ease, transform 0.2s ease; /* Transições suaves */
             box-shadow: var(--shadow-light);
-            z-index: 10; /* Ensure it's above other elements */
+            z-index: 10; /* Garante que o botão fique acima de outros elementos se houver sobreposição */
         }
 
         .download-top:hover {
             background-color: var(--medium-blue);
-            transform: translateY(-2px);
+            transform: translateY(-2px); /* Efeito sutil de "levantar" */
             box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
         }
 
+        /* Estilo da imagem principal (logo do app) no header */
         header img {
-            width: 120px; /* Slightly larger logo */
+            width: 120px;
             height: 120px;
-            border-radius: 25%; /* Soften corners for the logo */
-            margin-bottom: 25px; /* More space below logo */
+            border-radius: 25%; /* Borda suave para a imagem */
+            margin-bottom: 25px;
             box-shadow: var(--shadow-light);
+            /* filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.3)); /* Adiciona uma sombra mais suave ao redor do ícone, se for PNG com transparência */
         }
 
+        /* Título principal do aplicativo no header */
         header h1 {
-            font-size: 3.2em; /* Larger heading */
+            font-size: 3.2em;
             margin-bottom: 15px;
             font-weight: 700;
-            letter-spacing: -0.03em; /* Tighter letter spacing */
+            letter-spacing: -0.03em; /* Espaçamento entre letras para um visual mais moderno */
+            display: flex; /* Para alinhar o ícone interno com o texto */
+            justify-content: center;
+            align-items: center;
         }
 
+        /* Estilo para o ícone dentro do H1 (melhora a consistência) */
+        header h1 img {
+            width: 32px; /* Tamanho do ícone dentro do título */
+            height: 32px;
+            border-radius: 0; /* Remove border-radius para o ícone pequeno */
+            box-shadow: none; /* Remove sombra para o ícone pequeno */
+            margin-bottom: 0; /* Remove margem inferior para o ícone pequeno */
+            margin-right: 10px; /* Espaçamento entre o ícone e o texto do título */
+        }
+
+        /* Frase de impacto no header */
         header p {
-            font-size: 1.25em; /* Larger tagline */
+            font-size: 1.25em;
             font-weight: 300;
-            max-width: 700px; /* Wider tagline for better readability */
+            max-width: 700px;
             margin: 0 auto;
-            opacity: 0.9; /* Slightly less opaque for a softer look */
+            opacity: 0.9; /* Deixa o texto ligeiramente transparente para um visual mais suave */
         }
 
-        /* Sections */
+        /* Estilos gerais para Seções */
         section {
-            padding: 100px 0; /* More vertical padding */
+            padding: 100px 0; /* Espaçamento vertical generoso para cada seção */
             text-align: center;
         }
 
-        section:nth-of-type(even) {
+        section:nth-of-type(even) { /* Aplica fundo branco para seções pares */
             background-color: var(--white);
         }
 
+        /* Títulos das seções */
         section h2 {
-            font-size: 2.8em; /* Larger section titles */
-            margin-bottom: 50px; /* More space below title */
+            font-size: 2.8em;
+            margin-bottom: 50px;
             color: var(--medium-blue);
             font-weight: 600;
             position: relative;
-            display: inline-block; /* To allow pseudo-elements to size correctly */
+            display: inline-block; /* Permite que o pseudo-elemento `::after` seja centralizado corretamente */
         }
 
+        /* Linha decorativa abaixo dos títulos das seções */
         section h2::after {
             content: '';
             display: block;
@@ -121,35 +146,36 @@
             border-radius: 2px;
         }
 
-        /* Description */
+        /* Seção de Descrição do App */
         .description-content {
             display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 40px; /* More space between items */
-            max-width: 1000px; /* Allow wider content */
+            flex-wrap: wrap; /* Permite que os itens quebrem para a próxima linha em telas menores */
+            justify-content: center; /* Centraliza os itens horizontalmente */
+            gap: 40px; /* Espaço entre os cartões de descrição */
+            max-width: 1000px;
             margin: 0 auto;
         }
 
+        /* Cartão individual de descrição */
         .description-item {
-            flex: 1 1 300px; /* Optimal sizing for items */
+            flex: 1 1 300px; /* Cresce e encolhe, com largura base de 300px */
             background-color: var(--white);
-            padding: 35px; /* More padding inside items */
-            border-radius: 12px; /* Softer border-radius */
-            box-shadow: var(--shadow-light); /* Lighter shadow */
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            text-align: left; /* Align text left within cards */
+            padding: 35px;
+            border-radius: 12px;
+            box-shadow: var(--shadow-light);
+            transition: transform 0.3s ease, box-shadow 0.3s ease; /* Transições para hover */
+            text-align: left; /* Alinha o texto à esquerda dentro do cartão */
         }
 
         .description-item:hover {
-            transform: translateY(-8px); /* More pronounced hover effect */
-            box-shadow: var(--shadow-medium); /* Darker shadow on hover */
+            transform: translateY(-8px); /* Efeito de elevação mais pronunciado no hover */
+            box-shadow: var(--shadow-medium);
         }
 
         .description-item h3 {
             color: var(--dark-blue);
             margin-bottom: 15px;
-            font-size: 1.6em; /* Larger item titles */
+            font-size: 1.6em;
             font-weight: 600;
         }
 
@@ -158,120 +184,122 @@
             color: #555;
         }
 
-        /* Gallery */
+        /* Seção de Galeria de Imagens (Screenshots) */
         #screenshots {
             background-color: var(--bg-light);
-            padding-bottom: 80px; /* Match other sections */
+            padding-bottom: 80px; /* Ajuste para ter espaçamento consistente */
         }
 
         .screenshot-gallery {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Layout de grade responsivo */
             gap: 30px;
             justify-content: center;
         }
 
         .screenshot-item img {
             width: 100%;
-            border-radius: 12px; /* Softer border-radius */
-            box-shadow: var(--shadow-medium); /* More prominent shadow for images */
+            border-radius: 12px;
+            box-shadow: var(--shadow-medium); /* Sombra mais destacada para as imagens */
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
         .screenshot-item img:hover {
-            transform: scale(1.02); /* Slight zoom on hover */
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+            transform: scale(1.02); /* Leve zoom ao passar o mouse */
+            box-shadow: var(--shadow-strong);
         }
 
-        /* Download Section */
+        /* Seção de Download */
         #download {
             background-color: var(--dark-blue);
             color: var(--white);
-            padding: 80px 0; /* Consistent padding */
+            padding: 80px 0;
         }
 
         #download h2 {
-            color: var(--white);
+            color: var(--white); /* Título em branco nesta seção de fundo escuro */
         }
 
         .download-buttons-wrapper {
-            margin-top: 40px; /* Space above buttons */
+            margin-top: 40px;
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 25px; /* Space between buttons */
+            gap: 25px; /* Espaço entre os botões */
         }
 
+        /* Estilo dos botões de download e GitHub */
         .download-button, .github-button {
-            display: inline-flex; /* Use flex for alignment with icon */
-            align-items: center; /* Vertically align icon and text */
-            justify-content: center; /* Center content horizontally */
+            display: inline-flex; /* Permite alinhar ícone e texto */
+            align-items: center; /* Alinha verticalmente */
+            justify-content: center; /* Centraliza horizontalmente */
             background-color: var(--light-blue);
             color: var(--white);
-            padding: 18px 40px; /* Larger padding for buttons */
+            padding: 18px 40px;
             border-radius: 50px;
             text-decoration: none;
-            font-size: 1.4em; /* Larger font size */
+            font-size: 1.4em;
             font-weight: 700;
             transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
-            box-shadow: var(--shadow-medium); /* More pronounced shadow */
-            min-width: 250px; /* Ensure buttons have a minimum width */
+            box-shadow: var(--shadow-medium);
+            min-width: 250px; /* Garante que os botões tenham uma largura mínima */
         }
 
         .download-button:hover, .github-button:hover {
             background-color: var(--medium-blue);
-            transform: translateY(-5px); /* Stronger lift effect */
+            transform: translateY(-5px); /* Efeito de elevação mais forte */
             box-shadow: 0 12px 25px rgba(0, 0, 0, 0.3);
         }
 
+        /* Ícones dentro dos botões */
         .download-button svg, .github-button svg {
-            margin-right: 10px; /* Space between icon and text */
-            fill: currentColor; /* Inherit color from text */
+            margin-right: 10px;
+            fill: currentColor; /* Faz o SVG herdar a cor do texto do botão */
         }
 
-        /* Instructions */
+        /* Seção de Instruções de Instalação */
         .instructions {
-            max-width: 850px; /* Slightly wider instructions */
-            margin: 60px auto 0; /* More space above instructions */
+            max-width: 850px;
+            margin: 60px auto 0;
             text-align: left;
             background: var(--white);
-            padding: 30px; /* More padding */
+            padding: 30px;
             border-radius: 12px;
             box-shadow: var(--shadow-light);
-            border-left: 5px solid var(--medium-blue); /* Add a subtle left border */
+            border-left: 5px solid var(--medium-blue); /* Borda decorativa à esquerda */
         }
 
         .instructions h3 {
             color: var(--dark-blue);
-            margin-bottom: 20px; /* More space below heading */
-            font-size: 1.5em; /* Larger heading */
+            margin-bottom: 20px;
+            font-size: 1.5em;
             font-weight: 600;
         }
 
         .instructions p {
-            margin-bottom: 12px; /* Consistent spacing */
+            margin-bottom: 12px;
             font-size: 1.05em;
-            line-height: 1.7; /* Better line spacing for readability */
+            line-height: 1.7; /* Melhora a legibilidade do texto de instruções */
+            color: #333; /* Força a cor preta para o texto das instruções para contraste */
         }
         
         .instructions p strong {
-            color: var(--medium-blue); /* Highlight important text */
+            color: var(--medium-blue); /* Destaca palavras importantes */
         }
 
-
-        /* Footer */
+        /* Rodapé (Footer) */
         footer {
             background-color: var(--text-color);
             color: var(--white);
-            padding: 50px 0; /* More padding */
+            padding: 50px 0;
             text-align: center;
-            font-size: 1em; /* Slightly larger font */
+            font-size: 1em;
         }
 
         footer a {
             color: var(--light-blue);
             text-decoration: none;
-            margin: 0 15px; /* More space between links */
+            margin: 0 15px;
             transition: color 0.3s ease, text-decoration 0.3s ease;
         }
 
@@ -284,7 +312,8 @@
             margin-top: 15px;
         }
 
-        /* Responsive Design */
+        /* Design Responsivo (Media Queries) */
+        /* Para telas menores que 992px (desktops pequenos, tablets grandes) */
         @media (max-width: 992px) {
             .container {
                 padding: 0 20px;
@@ -303,7 +332,7 @@
             }
 
             .description-item {
-                flex: 1 1 280px;
+                flex: 1 1 280px; /* Ajusta o tamanho base dos cards */
             }
 
             .download-button, .github-button {
@@ -312,15 +341,16 @@
             }
         }
 
+        /* Para telas menores que 768px (tablets, celulares grandes) */
         @media (max-width: 768px) {
             .download-top {
-                position: relative; /* Make it flow with content */
+                position: relative; /* Remove o posicionamento absoluto */
                 top: auto;
                 right: auto;
-                margin: 20px auto 0; /* Center it below the header text */
-                display: block; /* Take full width for easier tap */
-                max-width: 200px; /* Limit its width */
-                padding: 12px 20px; /* Smaller padding */
+                margin: 20px auto 0; /* Centraliza o botão abaixo do texto do header */
+                display: block; /* Ocupa a largura total para facilitar o toque */
+                max-width: 200px; /* Limita a largura para não ficar muito grande */
+                padding: 12px 20px;
                 font-size: 1.1em;
             }
 
@@ -331,6 +361,11 @@
             header h1 {
                 font-size: 2.4em;
             }
+            header h1 img { /* Ajusta o tamanho do ícone no título para telas menores */
+                width: 28px;
+                height: 28px;
+            }
+
 
             header p {
                 font-size: 1em;
@@ -346,17 +381,17 @@
             }
 
             .description-item {
-                flex: 1 1 90%; /* Stack items on small screens */
+                flex: 1 1 90%; /* Faz os cards se empilharem */
             }
 
             .screenshot-gallery {
-                grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); /* Smaller grid items */
+                grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); /* Reduz o tamanho das imagens na grade */
             }
 
             .download-button, .github-button {
                 font-size: 1.1em;
                 padding: 14px 30px;
-                min-width: unset; /* Remove min-width for flexibility */
+                min-width: unset; /* Remove min-width para mais flexibilidade */
             }
 
             .instructions {
@@ -373,9 +408,15 @@
             }
         }
 
+        /* Para telas muito pequenas (celulares) */
         @media (max-width: 480px) {
             header h1 {
                 font-size: 2em;
+            }
+
+            header h1 img {
+                width: 24px;
+                height: 24px;
             }
 
             header p {
@@ -390,8 +431,8 @@
                 font-size: 1.8em;
             }
             .download-button, .github-button {
-                flex-direction: column; /* Stack icon and text */
-                gap: 5px; /* Space between stacked elements */
+                flex-direction: column; /* Empilha ícone e texto verticalmente */
+                gap: 5px;
                 padding: 12px 20px;
                 font-size: 1em;
             }
@@ -405,8 +446,10 @@
 <body>
     <header>
         <a href="#download" class="download-top">Baixar APK</a>
-        <img src="https://via.placeholder.com/120x120.png?text=Logo" alt="Ícone do App">
-        <h1><img src="images/icon_azul.png" width="20" style="vertical-align: middle; margin-right: 4px;"> Money</h1>
+        <h1>
+            <img src="images/icon_azul.png" width="90" height="90" alt="Ícone do Money">
+            Money
+        </h1>
         <p>Seu app de controle financeiro ainda mais fácil. Ainda em desenvolvimento, mas já funcional!</p>
     </header>
 
@@ -435,11 +478,11 @@
             <div class="container">
                 <h2>Telas do Aplicativo</h2>
                 <div class="screenshot-gallery">
-                    <div class="screenshot-item"><img src="images/contas.jpg" alt="Tela inicial mostrando suas contas bancarias"></div>
-                    <div class="screenshot-item"><img src="images/lancamenytos.jpg" alt="Tela de lançamentos"></div>
-                    <div class="screenshot-item"><img src="images/dre.jpg" alt="Tela de resumo geral"></div>
-                    <div class="screenshot-item"><img src="images/investimentos.jpg" alt="Tela de investimentos"></div>
-                    <div class="screenshot-item"><img src="images/extratos.jpg" alt="Tela de relatórios"></div>
+                    <div class="screenshot-item"><img src="images/contas.jpg" alt="Tela inicial do aplicativo mostrando suas contas bancárias e saldos"></div>
+                    <div class="screenshot-item"><img src="images/lancamentos.jpg" alt="Tela de lançamento de transações financeiras"></div>
+                    <div class="screenshot-item"><img src="images/dre.jpg" alt="Tela de DRE (Demonstrativo de Resultados) do aplicativo"></div>
+                    <div class="screenshot-item"><img src="images/investimentos.jpg" alt="Tela de gerenciamento de investimentos no aplicativo"></div>
+                    <div class="screenshot-item"><img src="images/extratos.jpg" alt="Tela de extratos e relatórios detalhados"></div>
                 </div>
             </div>
         </section>
@@ -448,11 +491,11 @@
             <div class="container">
                 <h2>Baixe e Teste Agora</h2>
                 <div class="download-buttons-wrapper">
-                    <a href="apk/Money.apk" class="download-button" download>
+                    <a href="apk/Money_beta.apk" class="download-button" download>
                         <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#FFFFFF"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
                         Baixar APK
                     </a>
-                    <a href="https://github.com/danilobiancod3/money_app" class="github-button" target="_blank">
+                    <a href="https://github.com/danilobiancod3/money_app" class="github-button" target="_blank" rel="noopener noreferrer">
                         <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#FFFFFF"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.087-.731.084-.716.084-.716 1.205.086 1.838 1.238 1.838 1.238 1.07 1.835 2.809 1.305 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.118-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.602.802.573 4.765-1.589 8.197-6.094 8.197-11.387c0-6.627-5.372-12-12-12z"/></svg>
                         Ver Projeto no GitHub
                     </a>
@@ -460,11 +503,11 @@
 
                 <div class="instructions">
                     <h3>Como instalar o APK no Android:</h3>
-                    <p style="color: #000;">1. Toque no botão "Baixar APK" acima.</p>
-                    <p style="color: #000;">2. Após o download, abra o arquivo <strong>Money.apk</strong> no seu gerenciador de arquivos ou notificações.</p>
-                    <p style="color: #000;">3. Caso apareça um aviso de segurança sobre "Fontes Desconhecidas", toque em <strong>"Configurações"</strong> e ative <strong>"Permitir desta fonte"</strong> (o texto pode variar ligeiramente dependendo do seu Android).</p>
-                    <p style="color: #000;">4. Volte e confirme a instalação.</p>
-                    <p style="color: #000;"><strong>Pronto!</strong> O app estará disponível na sua lista de aplicativos para você começar a controlar suas finanças.</p>
+                    <p>1. Toque no botão "Baixar APK" acima.</p>
+                    <p>2. Após o download, abra o arquivo <strong>Money.apk</strong> no seu gerenciador de arquivos ou notificações.</p>
+                    <p>3. Caso apareça um aviso de segurança sobre "Fontes Desconhecidas", toque em <strong>"Configurações"</strong> e ative <strong>"Permitir desta fonte"</strong> (o texto pode variar ligeiramente dependendo do seu Android).</p>
+                    <p>4. Volte e confirme a instalação.</p>
+                    <p><strong>Pronto!</strong> O app estará disponível na sua lista de aplicativos para você começar a controlar suas finanças.</p>
                 </div>
             </div>
         </section>
@@ -472,8 +515,8 @@
 
     <footer>
         <div class="container">
-            <p>Desenvolvido por <a href="https://danilobiancod3.github.io/danilo" target="_blank">Danilo Gregorio Bianco</a></p>
-            <p>&copy; 2025 - Money App. Todos os direitos reservados.</p>
+            <p>Desenvolvido por: <a href="https://danilobiancod3.github.io/danilo" target="_blank" rel="noopener noreferrer">Danilo Gregorio Bianco</a></p>
+            <p>2025 - Money App. app de controle financeiro</p>
         </div>
     </footer>
 </body>
