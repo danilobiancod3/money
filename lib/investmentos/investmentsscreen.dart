@@ -49,7 +49,7 @@ class _InvestmentsScreenState extends State<InvestmentsScreen> {
     final result = await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => AddInvestmentScreen(),
+        builder: (_) => const AddInvestmentScreen(),
       ),
     );
     if (result == true) {

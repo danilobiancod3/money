@@ -1,8 +1,7 @@
-// File: lib/main.dart
-
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'core/constants/app_constants.dart';
 import 'home.dart';
 import 'database/banco/usuario_database_helper.dart';
 import 'database/models/usuario.dart';
@@ -11,9 +10,8 @@ import 'database/models/categorias.dart';
 import 'database/database_helper.dart';
 
 void main() async {
-  //WidgetsFlutterBinding.ensureInitialized();
-  //await DatabaseHelper.excluirBancoDeDados(); // <- Apenas para testes
-  runApp(MoneyApp());
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(const MoneyApp());
 }
 
 
@@ -24,38 +22,43 @@ class MoneyApp extends StatefulWidget {
 }
 
 class _MoneyAppState extends State<MoneyApp> {
- // Construtor da classe, define uma chave opcional (usada para otimização e testes)
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Money', // Título do aplicativo (pode aparecer na multitarefa do Android)
-      debugShowCheckedModeBanner: false, // Remove a faixa de "debug" do canto superior direito
-
+      title: AppConstants.appName,
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        useMaterial3: true, // Habilita o Material Design 3 (versão mais recente com novos componentes e temas)
-        brightness: Brightness.light, // Define que este tema é para o modo claro
-        colorSchemeSeed: Color(0xFF00B8F4), // Cor base (semente) do esquema de cores no tema claro (azul claro)
+        useMaterial3: true,
+        brightness: Brightness.light,
+        colorSchemeSeed: const Color(0xFF00B8F4),
+        appBarTheme: const AppBarTheme(
+          elevation: 0,
+          centerTitle: true,
+          backgroundColor: Color(0xFF00B8F4),
+          foregroundColor: Colors.white,
+        ),
       ),
-
       darkTheme: ThemeData(
-        useMaterial3: true, // Também usa Material Design 3 no modo escuro
-        brightness: Brightness.dark, // Define que este tema é para o modo escuro
-        colorSchemeSeed: Color(0xFF004D92), // Cor base do esquema de cores no tema escuro (azul escuro)
+        useMaterial3: true,
+        brightness: Brightness.dark,
+        colorSchemeSeed: const Color(0xFF004D92),
+        appBarTheme: const AppBarTheme(
+          elevation: 0,
+          centerTitle: true,
+          backgroundColor: Color(0xFF004D92),
+          foregroundColor: Colors.white,
+        ),
       ),
-
-      themeMode: ThemeMode.system, // Usa o tema de acordo com o modo do sistema (claro ou escuro)
-
+      themeMode: ThemeMode.system,
       supportedLocales: const [
-        Locale('pt', 'BR'), // Suporte para o idioma português do Brasil
+        Locale('pt', 'BR'),
       ],
-
       localizationsDelegates: const [
-        GlobalMaterialLocalizations.delegate, // Suporte à localização de widgets do Material
-        GlobalWidgetsLocalizations.delegate,  // Suporte à localização de widgets genéricos
-        GlobalCupertinoLocalizations.delegate, // Suporte à localização de widgets estilo iOS
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
       ],
-
-      home: const LoadingScreenAlt(), // Tela inicial do app (deve ser uma widget chamada HomeScreen)
+      home: const LoadingScreenAlt(),
     );
   }
 }
@@ -68,27 +71,25 @@ class LoadingScreenAlt extends StatefulWidget {
 }
 
 class _LoadingScreenAltState extends State<LoadingScreenAlt> {
-
   @override
   void initState() {
     super.initState();
-    startDatabase();
-    homeScreen();
+    _initializeApp();
   }
 
-  void homeScreen() async {
-  Future.delayed(const Duration(seconds: 3), () {
-    home();
-  });
-}
+  Future<void> _initializeApp() async {
+    await startDatabase();
+    await Future.delayed(const Duration(seconds: AppConstants.splashScreenDuration));
+    if (mounted) {
+      _navigateToHome();
+    }
+  }
 
-
-  // Função responsável por navegar para a tela principal (Home)
-  home() {
+  void _navigateToHome() {
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
-        builder: (context) => const HomeScreen(index: 0,),
+        builder: (context) => const HomeScreen(index: 0),
       ),
     );
   }
@@ -96,47 +97,67 @@ class _LoadingScreenAltState extends State<LoadingScreenAlt> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final primaryColor = isDark ? const Color(0xFF00B8F4) : const Color(0xFF004D92);
 
     return Scaffold(
       backgroundColor: isDark ? Colors.grey[900] : Colors.grey[100],
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // Logo estilizado
-            Container(
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: isDark ? Color(0xFF00B8F4) :  Color(0xFF004D92),
-                borderRadius: BorderRadius.circular(100),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.2),
-                    blurRadius: 10,
-                    offset: const Offset(0, 5),
-                  )
-                ],
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: isDark 
+              ? [Colors.grey[900]!, Colors.grey[800]!]
+              : [Colors.grey[100]!, Colors.grey[200]!],
+          ),
+        ),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(24),
+                decoration: BoxDecoration(
+                  color: primaryColor,
+                  borderRadius: BorderRadius.circular(120),
+                  boxShadow: [
+                    BoxShadow(
+                      color: primaryColor.withOpacity(0.3),
+                      blurRadius: 20,
+                      offset: const Offset(0, 10),
+                    ),
+                  ],
+                ),
+                child: const Icon(
+                  Icons.attach_money,
+                  size: 80,
+                  color: Colors.white,
+                ),
               ),
-              child: const Icon(
-                Icons.attach_money,
-                size: 60,
-                color: Colors.white,
+              const SizedBox(height: 40),
+              Text(
+                AppConstants.appName,
+                style: TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                  color: isDark ? Colors.white : Colors.grey[800],
+                ),
               ),
-            ),
-            const SizedBox(height: 30),
-            Text(
-              'Carregando seu financeiro...',
-              style: TextStyle(
-                fontSize: 18,
-                color: isDark ? Colors.white70 : Colors.grey[800],
+              const SizedBox(height: 16),
+              Text(
+                'Carregando seu financeiro...',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: isDark ? Colors.white70 : Colors.grey[600],
+                ),
               ),
-            ),
-            const SizedBox(height: 30),
-            SpinKitFadingCube(
-              color: isDark ? Color(0xFF00B8F4) :  Color(0xFF004D92),
-              size: 50.0,
-            ),
-          ],
+              const SizedBox(height: 40),
+              SpinKitFadingCube(
+                color: primaryColor,
+                size: 50.0,
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -144,10 +165,18 @@ class _LoadingScreenAltState extends State<LoadingScreenAlt> {
 }
 
 Future<void> startDatabase() async {
-  final usuarioHelper = UsuarioDatabaseHelper();
-  final categoriaHelper = CategoriasDatabaseHelper();
+  try {
+    final usuarioHelper = UsuarioDatabaseHelper();
+    final categoriaHelper = CategoriasDatabaseHelper();
 
-  // Verifica se há usuários no banco; se não, cria um usuário padrão
+    await _initializeDefaultUser(usuarioHelper);
+    await _initializeDefaultCategories(categoriaHelper);
+  } catch (e) {
+    debugPrint('Erro ao inicializar banco de dados: $e');
+  }
+}
+
+Future<void> _initializeDefaultUser(UsuarioDatabaseHelper usuarioHelper) async {
   final usuarios = await usuarioHelper.consultaUsuario();
   if (usuarios.isEmpty) {
     final novoUsuario = Usuario(
@@ -163,40 +192,37 @@ Future<void> startDatabase() async {
     );
     await usuarioHelper.insertUsuario(novoUsuario);
   }
+}
 
-  // Verifica se há categorias no banco; se não, cria categorias padrão
+Future<void> _initializeDefaultCategories(CategoriasDatabaseHelper categoriaHelper) async {
   final categorias = await categoriaHelper.getCategorias();
   if (categorias.isEmpty) {
-    // Categoria geral
-    final categoriaTodos = Categorias(tipo: 'todos', categoria: 'Outro');
-    await categoriaHelper.insertCategoria(categoriaTodos);
+    await _insertDefaultCategories(categoriaHelper);
+  }
+}
 
-    // Categorias de saída (despesas)
-    final categoriaSaidaAlimentacao = Categorias(tipo: 'saida', categoria: 'Alimentação');
-    final categoriaSaidaTransporte = Categorias(tipo: 'saida', categoria: 'Transporte');
-    final categoriaSaidaLazer = Categorias(tipo: 'saida', categoria: 'Lazer');
-    await categoriaHelper.insertCategoria(categoriaSaidaAlimentacao);
-    await categoriaHelper.insertCategoria(categoriaSaidaTransporte);
-    await categoriaHelper.insertCategoria(categoriaSaidaLazer);
+Future<void> _insertDefaultCategories(CategoriasDatabaseHelper categoriaHelper) async {
+  final defaultCategories = [
+    Categorias(tipo: 'todos', categoria: 'Outro'),
+    Categorias(tipo: 'saida', categoria: 'Alimentação'),
+    Categorias(tipo: 'saida', categoria: 'Transporte'),
+    Categorias(tipo: 'saida', categoria: 'Lazer'),
+    Categorias(tipo: 'saida', categoria: 'Saúde'),
+    Categorias(tipo: 'saida', categoria: 'Educação'),
+    Categorias(tipo: 'saida', categoria: 'Moradia'),
+    Categorias(tipo: 'saida', categoria: 'Vestuário'),
+    Categorias(tipo: 'entrada', categoria: 'Salário'),
+    Categorias(tipo: 'entrada', categoria: 'Freelance'),
+    Categorias(tipo: 'entrada', categoria: 'Investimentos'),
+    Categorias(tipo: 'entrada', categoria: 'Presentes'),
+    Categorias(tipo: 'contas', categoria: 'Financiamento'),
+    Categorias(tipo: 'contas', categoria: 'Emprestimo'),
+    Categorias(tipo: 'investimento', categoria: 'Ações'),
+    Categorias(tipo: 'investimento', categoria: 'Renda Fixa'),
+    Categorias(tipo: 'investimento', categoria: 'Imobiliário'),
+  ];
 
-    // Categorias de entrada (receitas)
-    final categoriaEntradaSalario = Categorias(tipo: 'entrada', categoria: 'Salário');
-    final categoriaEntradaFreelance = Categorias(tipo: 'entrada', categoria: 'Freelance');
-    await categoriaHelper.insertCategoria(categoriaEntradaSalario);
-    await categoriaHelper.insertCategoria(categoriaEntradaFreelance);
-
-    // Categorias de entrada (receitas)
-    final categoriaContasAPagarFinanciamento = Categorias(tipo: 'contas', categoria: 'Financiamento');
-    final categoriaContasAPagarEmprestimo = Categorias(tipo: 'contas', categoria: 'Emprestimo');
-    await categoriaHelper.insertCategoria(categoriaContasAPagarFinanciamento);
-    await categoriaHelper.insertCategoria(categoriaContasAPagarEmprestimo);
-
-    // Categorias de investimentos
-    final categoriaInvestimentoAcoes = Categorias(tipo: 'investimento', categoria: 'Ações');
-    final categoriaInvestimentoRendaFixa = Categorias(tipo: 'investimento', categoria: 'Renda Fixa');
-    final categoriaInvestimentoImobiliario = Categorias(tipo: 'investimento', categoria: 'Imobiliário');
-    await categoriaHelper.insertCategoria(categoriaInvestimentoAcoes);
-    await categoriaHelper.insertCategoria(categoriaInvestimentoRendaFixa);
-    await categoriaHelper.insertCategoria(categoriaInvestimentoImobiliario);
+  for (final categoria in defaultCategories) {
+    await categoriaHelper.insertCategoria(categoria);
   }
 }

@@ -1,27 +1,23 @@
 class Categorias {
-  int? id;
-  String tipo;
-  String categoria;
-
   Categorias({
     this.id,
     required this.tipo,
     required this.categoria,
   });
 
-  Map<String, dynamic> toMap() {
-    return {
-      'id': id,
-      'tipo': tipo,
-      'categoria': categoria,
-    };
-  }
-
-  factory Categorias.fromMap(Map<String, dynamic> map) {
-  return Categorias(
+  factory Categorias.fromMap(Map<String, dynamic> map) => Categorias(
     id: map['id'],
     tipo: map['tipo'],
     categoria: map['categoria'],
   );
-}
+
+  int? id;
+  String tipo;
+  String categoria;
+
+  Map<String, dynamic> toMap() => {
+    'id': id,
+    'tipo': tipo,
+    'categoria': categoria,
+  };
 }

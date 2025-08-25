@@ -16,22 +16,17 @@ import '../../database/banco/lancamentos_database_helper.dart'; // Para lançar 
 
 // Assumindo que estas funções estão em desing_funcoes/function.dart
 // Você precisará garantir que elas existam e estejam acessíveis.
-String corrigeVirgula(String text) {
-  return text.replaceAll(',', '.');
-}
+String corrigeVirgula(String text) => text.replaceAll(',', '.');
 
-String maiusculo(String text) {
-  if (text.isEmpty) return text;
-  return text.toUpperCase();
-}
+String maiusculo(String text) => text.isEmpty ? text : text.toUpperCase();
 
 String valorReal(String text) {
   if (text.isEmpty) return '0,00';
-  String cleanedText = text.replaceAll(RegExp(r'[^\d,]'), '').replaceAll(',', '');
+  final String cleanedText = text.replaceAll(RegExp(r'[^\d,]'), '').replaceAll(',', '');
 
   if (cleanedText.isEmpty) return '0,00';
 
-  double value = double.parse(cleanedText) / 100;
+  final double value = double.parse(cleanedText) / 100;
   return NumberFormat.currency(locale: 'pt_BR', symbol: '').format(value);
 }
 
@@ -111,7 +106,7 @@ class _AddContasAPagarScreenState extends State<AddContasAPagarScreen> {
   DateTime _dataInicio = DateTime.now();
   DateTime? _dataTermino;
   DateTime? _dataPrimeiraParcela;
-  String _icone = 'receipt_long'; // Ícone padrão
+  final String _icone = 'receipt_long';
 
   bool _quitado = false;
   bool _oculto = false;
@@ -281,7 +276,7 @@ class _AddContasAPagarScreenState extends State<AddContasAPagarScreen> {
     );
 
     try {
-      final newContaId = await ContasAPagarDatabaseHelper().insertConta(conta);
+      await ContasAPagarDatabaseHelper().insertConta(conta);
 
       // Se o pagamento inicial deve ser registrado, cria um lançamento de saída
       if (_shouldRecordInitialPayment && parsedValorPago > 0 && _selectedBankForPaymentId != null) {
@@ -429,12 +424,7 @@ class _AddContasAPagarScreenState extends State<AddContasAPagarScreen> {
                                   _selectedTipoContaId = value;
                                 });
                               },
-                              validator: (value) {
-                                if (value == null) {
-                                  return 'Selecione um tipo de conta.';
-                                }
-                                return null;
-                              },
+                              validator: (value) => value == null ? 'Selecione um tipo de conta.' : null,
                             ),
                           ),
                         ),
@@ -453,7 +443,7 @@ class _AddContasAPagarScreenState extends State<AddContasAPagarScreen> {
                   if (double.tryParse(corrigeVirgula(v)) == null) return 'Valor inválido.';
                   return null;
                 },
-                onChanged: (String) {
+                onChanged: (value) {
                   _valorContaController.text = valorReal(_valorContaController.text);
                 },
               ),
@@ -583,7 +573,7 @@ class _AddContasAPagarScreenState extends State<AddContasAPagarScreen> {
                     if (double.tryParse(corrigeVirgula(v)) == null) return 'Valor inválido.';
                     return null;
                   },
-                  onChanged: (String) {
+                  onChanged: (value) {
                     _valorPagoController.text = valorReal(_valorPagoController.text);
                   },
                 ),
@@ -627,12 +617,7 @@ class _AddContasAPagarScreenState extends State<AddContasAPagarScreen> {
                                     _selectedBankForPaymentId = value;
                                   });
                                 },
-                                validator: (value) {
-                                  if (value == null) {
-                                    return 'Selecione um banco para o pagamento.';
-                                  }
-                                  return null;
-                                },
+                                validator: (value) => value == null ? 'Selecione um banco para o pagamento.' : null,
                               ),
                             ),
                           ),

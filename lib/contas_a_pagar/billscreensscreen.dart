@@ -60,7 +60,7 @@ class _ContasAPagarScreenState extends State<ContasAPagarScreen> {
   void _navigateToAddEditConta({ContasAPagar? conta}) async {
     final result = await Navigator.push(
       context,
-      MaterialPageRoute(builder: (_) => AddContasAPagarScreen()),
+      MaterialPageRoute(builder: (_) => const AddContasAPagarScreen()),
     );
     // Se a tela de adicionar/editar retornar 'true', recarrega as contas
     if (result == true) _loadContas();

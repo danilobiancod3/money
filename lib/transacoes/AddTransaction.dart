@@ -49,13 +49,10 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
   @override
   void initState() {
     super.initState();
-    // Loads bank accounts and categories on screen initialization.
     _loadBancos();
     _loadCategorias();
   }
 
-  /// Loads categories based on transaction type (income/expense)
-  /// and includes open bills if it's an expense.
   Future<void> _loadCategorias() async {
     setState(() {
       _isLoadingCategorias = true;
@@ -63,21 +60,15 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     });
 
     try {
-      List<Categorias> categoriasList = [];
+      final List<Categorias> categoriasTipo = await _categoriaHelper.getCategoriasPorTipo(_isIncome ? 'entrada' : 'saida');
+      final List<Categorias> categoriasList = List<Categorias>.from(categoriasTipo);
 
-      // Fetches 'income' or 'expense' categories.
-      final categoriasTipo = await _categoriaHelper.getCategoriasPorTipo(_isIncome ? 'entrada' : 'saida');
-      categoriasList.addAll(categoriasTipo);
-
-      // Fetches 'all' (neutral) categories.
       final categoriasTodos = await _categoriaHelper.getCategoriasPorTipo('todos');
       categoriasList.addAll(categoriasTodos);
 
-      // If it's an expense, add open bills as category options.
       if (!_isIncome) {
         final contasEmAberto = await _contasHelper.getContasEmAberto();
         for (var conta in contasEmAberto) {
-          // Creates a "Category" from the ContasAPagar for display in the dropdown.
           categoriasList.add(Categorias(
             id: conta.id! + _contaPagarIdOffset,
             categoria: 'Pagar: ${conta.nome}',
@@ -88,7 +79,6 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
 
       setState(() {
         _availableCategorias = categoriasList;
-        // Ensures the selected value is valid; defaults to the first item if not.
         if (_availableCategorias.isNotEmpty) {
           if (_selectedCategoriaId == null ||
               !_availableCategorias.any((cat) => cat.id == _selectedCategoriaId)) {
@@ -115,7 +105,6 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     }
   }
 
-  /// Loads available bank accounts.
   Future<void> _loadBancos() async {
     setState(() {
       _isLoadingBancos = true;
@@ -125,7 +114,6 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
       final bancos = await _bancosHelper.getBancos();
       setState(() {
         _availableBancos = bancos;
-        // Ensures the selected value is valid; defaults to the first item if not.
         if (_availableBancos.isNotEmpty) {
           if (_selectedAccountId == null ||
               !_availableBancos.any((banco) => banco.id == _selectedAccountId)) {
@@ -154,20 +142,16 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
 
   @override
   void dispose() {
-    // Disposes of text editing controllers.
     _nameController.dispose();
     _amountController.dispose();
     _descriptionController.dispose();
     super.dispose();
   }
 
-  /// Handles form submission.
   Future<void> _submitForm() async {
-    // Validates all form fields.
     if (!_formKey.currentState!.validate()) return;
     _formKey.currentState!.save();
 
-    // Checks if an account is selected.
     if (_selectedAccountId == null) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -182,11 +166,9 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
 
     final double valorDigitado = double.parse(corrigeVirgula(_amountController.text));
 
-    // If it's an expense, validate balance before proceeding.
     if (!_isIncome) {
       await _validacao(valorDigitado);
     } else {
-      // For income, just add the value to the account and save the transaction.
       await _bancosHelper.somarValorPorId(
         _selectedAccountId!,
         valorDigitado,
@@ -195,21 +177,18 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     }
   }
 
-  /// Validates account balance for expense transactions.
-  Future<void> _validacao(double valorDigitado) async {
-    double saldo = await _bancosHelper.getValorDoBancoPorId(_selectedAccountId!);
+  Future<void> _validacao(final double valorDigitado) async {
+    final double saldo = await _bancosHelper.getValorDoBancoPorId(_selectedAccountId!);
 
     if (saldo >= valorDigitado) {
-      // If sufficient balance, subtracts the value and saves.
       await _bancosHelper.subtrairValorPorId(_selectedAccountId!, valorDigitado);
       await _submitFormInterno(valorDigitado);
     } else {
-      // If insufficient balance, asks the user if they want to proceed.
-      bool? continuar = await showDialog<bool>(
-            context: context,
-            builder: (context) => AlertDialog(
-              title: const Text('Saldo insuficiente'),
-              content: Text(
+      final bool? continuar = await showDialog<bool>(
+        context: context,
+        builder: (BuildContext dialogContext) => AlertDialog(
+          title: const Text('Saldo insuficiente'),
+          content: Text(
                 'O saldo da conta selecionada é de R\$${saldo.toStringAsFixed(2)}, '
                 'mas o valor digitado é R\$${valorDigitado.toStringAsFixed(2)}.\n\n'
                 'Deseja lançar mesmo assim?',
@@ -225,20 +204,18 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                 ),
               ],
             ),
-          ) ??
-          false;
+          );
 
-      if (continuar) {
-        // If the user chooses to proceed, subtracts the value and saves.
+      final bool prosseguir = continuar ?? false;
+
+      if (prosseguir) {
         await _bancosHelper.subtrairValorPorId(_selectedAccountId!, valorDigitado);
         await _submitFormInterno(valorDigitado);
       }
     }
   }
 
-  /// Internal logic to save the transaction (after validations).
   Future<void> _submitFormInterno(double valorDigitado) async {
-    // Checks if a category is selected.
     if (_selectedCategoriaId == null) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -255,7 +232,6 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     String categoriaNomeParaLancamento;
     bool isContaPaga = false;
 
-    // Checks if the selected category is a virtual "Bill to Pay".
     if (categoriaIdSelecionada >= _contaPagarIdOffset) {
       final originalContaId = categoriaIdSelecionada - _contaPagarIdOffset;
       final ContasAPagar? contaApagar = await _contasHelper.getContaPorId(originalContaId);
@@ -264,21 +240,17 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
         categoriaNomeParaLancamento = 'Pagamento: ${contaApagar.nome}';
         isContaPaga = true;
 
-        // Adds the transaction value to the paid amount of the bill.
         contaApagar.valorPago = contaApagar.valorPago + valorDigitado;
 
-        // Checks if the bill has been fully paid.
         if (contaApagar.valorPago >= contaApagar.valorDaConta) {
           contaApagar.quitado = true;
         } else {
           contaApagar.quitado = false;
         }
 
-        // Updates the bill in the database.
         await _contasHelper.updateConta(contaApagar);
 
         if (mounted) {
-          // Displays feedback message adjusted for partial or full payment.
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
@@ -291,19 +263,16 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
           );
         }
       } else {
-        // Fallback if the original bill is not found.
         categoriaNomeParaLancamento = _availableCategorias
             .firstWhere((cat) => cat.id == categoriaIdSelecionada)
             .categoria;
       }
     } else {
-      // It's a normal category.
       categoriaNomeParaLancamento = _availableCategorias
           .firstWhere((cat) => cat.id == categoriaIdSelecionada)
           .categoria;
     }
 
-    // Creates the Lancamento object with form data.
     final lancamento = Lancamento(
       entrada: _isIncome,
       nome: maiusculo(_nameController.text),
@@ -315,16 +284,13 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     );
 
     try {
-      // Inserts the transaction into the database.
       await _lancamentosHelper.insertLancamento(lancamento);
       if (mounted) {
-        // Shows success message if it's not a bill payment.
         if (!isContaPaga) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Lançamento salvo com sucesso!')),
           );
         }
-        // Returns to the previous screen and indicates success.
         Navigator.pop(context, true);
       }
     } catch (e) {
@@ -340,7 +306,6 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     }
   }
 
-  /// Opens the date picker.
   Future<void> _pickDate() async {
     try {
       final DateTime? picked = await showDatePicker(
@@ -395,7 +360,6 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
           key: _formKey,
           child: ListView(
             children: [
-              // Switch for Income/Expense.
               Card(
                 margin: const EdgeInsets.only(bottom: 16),
                 elevation: 2,
@@ -404,48 +368,37 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
                   child: SwitchListTile(
                     title: Text(
-                      _isIncome ? 'Entrada (Receita)' : 'Saída (Despesa)',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: _isIncome ? Colors.green : Colors.red,
-                      ),
+                      _isIncome ? 'Receita' : 'Despesa',
+                      style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
+                    subtitle: Text(_isIncome ? 'Dinheiro entrando' : 'Dinheiro saindo'),
                     value: _isIncome,
-                    onChanged: (val) {
+                    onChanged: (bool value) {
                       setState(() {
-                        _isIncome = val;
+                        _isIncome = value;
+                        _selectedCategoriaId = null;
                       });
                       _loadCategorias();
                     },
-                    activeColor: Colors.green,
-                    inactiveThumbColor: Colors.red,
-                    secondary: Icon(
-                      _isIncome ? Icons.arrow_circle_up : Icons.arrow_circle_down,
-                      color: _isIncome ? Colors.green : Colors.red,
-                    ),
+                    activeColor: Theme.of(context).primaryColor,
                   ),
                 ),
               ),
-              const SizedBox(height: 12),
 
-              // Text field for transaction name.
-              caixaTexto(
+              caixaTextoOnChanged(
                 true,
                 context,
                 _nameController,
                 TextInputType.text,
                 50,
                 'Nome do Lançamento (Ex: Salário, Aluguel)',
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Insira um nome para o lançamento.';
-                  }
-                  return null;
-                },
+                onChanged: (value) {},
+                validator: (value) => value == null || value.isEmpty 
+                    ? 'Insira um nome para o lançamento.' 
+                    : null,
               ),
               const SizedBox(height: 16),
 
-              // Dropdown for Category selection.
               _isLoadingCategorias
                   ? const Center(child: CircularProgressIndicator())
                   : _availableCategorias.isEmpty
@@ -505,18 +458,14 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                                   _selectedCategoriaId = value;
                                 });
                               },
-                              validator: (value) {
-                                if (value == null) {
-                                  return 'Selecione uma categoria para o lançamento.';
-                                }
-                                return null;
-                              },
+                              validator: (value) => value == null 
+                                  ? 'Selecione uma categoria para o lançamento.' 
+                                  : null,
                             ),
                           ),
                         ),
               const SizedBox(height: 16),
 
-              // Text field for amount.
               caixaTextoOnChanged(
                 true,
                 context,
@@ -524,6 +473,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                 TextInputType.number,
                 20,
                 'Valor (Ex: 1500,50)',
+                onChanged: (value) {},
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Insira o valor.';
@@ -533,44 +483,33 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                   }
                   return null;
                 },
-                onChanged: (String) {
-                  _amountController.text = valorReal(_amountController.text);
-                },
               ),
               const SizedBox(height: 16),
 
-              // Text field for description.
-              caixaTexto(
-                true,
+              caixaTextoOnChanged(
+                false,
                 context,
                 _descriptionController,
-                TextInputType.multiline,
+                TextInputType.text,
                 100,
-                'Descrição detalhada (Opcional)',
+                'Descrição (Opcional)',
+                onChanged: (value) {},
               ),
               const SizedBox(height: 16),
 
-              // Card for date selection.
               Card(
                 elevation: 2,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 child: ListTile(
+                  leading: const Icon(Icons.calendar_today),
                   title: const Text('Data do Lançamento'),
-                  subtitle: Text(
-                    DateFormat('dd/MM/yyyy').format(_selectedDate),
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                      color: Theme.of(context).primaryColor,
-                    ),
-                  ),
-                  trailing: const Icon(Icons.calendar_today_outlined),
+                  subtitle: Text(DateFormat('dd/MM/yyyy').format(_selectedDate)),
+                  trailing: const Icon(Icons.arrow_drop_down),
                   onTap: _pickDate,
                 ),
               ),
               const SizedBox(height: 16),
 
-              // Dropdown for Account (Bank) selection.
               _isLoadingBancos
                   ? const Center(child: CircularProgressIndicator())
                   : _availableBancos.isEmpty
@@ -585,9 +524,10 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                                 const Text(
                                   'Nenhuma conta disponível.',
                                   style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+                                  textAlign: TextAlign.center,
                                 ),
                                 const Text(
-                                  'Adicione uma conta em "Minhas Contas" para categorizar seus lançamentos.',
+                                  'Crie contas em "Contas" para gerenciar seus lançamentos.',
                                   textAlign: TextAlign.center,
                                   style: TextStyle(color: Colors.red, fontSize: 13),
                                 ),
@@ -595,7 +535,6 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                                   icon: const Icon(Icons.add_circle_outline, color: Colors.red),
                                   label: const Text('Adicionar Conta', style: TextStyle(color: Colors.red)),
                                   onPressed: () async {
-                                    // Navigates to the accounts tab in HomeScreen.
                                     await Navigator.pushReplacement(
                                       context,
                                       MaterialPageRoute(
@@ -632,18 +571,14 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                                   _selectedAccountId = value;
                                 });
                               },
-                              validator: (value) {
-                                if (value == null) {
-                                  return 'Selecione uma conta para o lançamento.';
-                                }
-                                return null;
-                              },
+                              validator: (value) => value == null 
+                                  ? 'Selecione uma conta para o lançamento.' 
+                                  : null,
                             ),
                           ),
                         ),
               const SizedBox(height: 16),
 
-              // Save Transaction button.
               SizedBox(
                 height: 50,
                 child: ElevatedButton.icon(
@@ -662,12 +597,10 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
               ),
               const SizedBox(height: 16),
 
-              // Transfer button.
               SizedBox(
                 height: 50,
                 child: OutlinedButton.icon(
                   onPressed: () {
-                    // Navigates to the transfer screen.
                     Navigator.push(
                       context,
                       MaterialPageRoute(

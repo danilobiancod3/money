@@ -28,10 +28,10 @@ String brl(double valor) {
 String corrigeVirgula(String valor) {
   valor = valor.replaceAll(RegExp(r'[^0-9,\.]'), '');
   valor = valor.replaceAll(',', '.');
-  List<String> partes = valor.split('.');
+  final List<String> partes = valor.split('.');
   if (partes.length > 2) {
-    String parteInteira = partes.sublist(0, partes.length - 1).join();
-    String parteDecimal = partes.last;
+    final String parteInteira = partes.sublist(0, partes.length - 1).join();
+    final String parteDecimal = partes.last;
     valor = '$parteInteira.$parteDecimal';
   }
   if (valor.trim().isEmpty || double.tryParse(valor) == null) {
@@ -163,9 +163,9 @@ String valorReal(String valor) {
   }
 
   // Insere ponto antes dos dois últimos dígitos
-  String textoComPonto = '${texto.substring(0, texto.length - 2)}.${texto.substring(texto.length - 2)}';
+  final String textoComPonto = '${texto.substring(0, texto.length - 2)}.${texto.substring(texto.length - 2)}';
 
-  double valorNumerico = double.tryParse(textoComPonto) ?? 0.0;
+  final double valorNumerico = double.tryParse(textoComPonto) ?? 0.0;
   return brl(valorNumerico);
 }
 

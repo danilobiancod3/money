@@ -43,7 +43,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
     final result = await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => AddTransactionScreen(),
+        builder: (_) => const AddTransactionScreen(),
       ),
     );
     if (result == true) {

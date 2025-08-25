@@ -100,7 +100,7 @@ class _TransferScreenState extends State<TransferScreen> {
       final double originBalance = await _bancosHelper.getValorDoBancoPorId(_selectedOriginAccountId!);
 
       if (originBalance < transferAmount) {
-        bool? continuar = await showDialog<bool>(
+        final bool? continuar = await showDialog<bool>(
           context: context,
           builder: (context) => AlertDialog(
             title: const Text('Saldo insuficiente'),
@@ -256,7 +256,7 @@ class _TransferScreenState extends State<TransferScreen> {
                   }
                   return null;
                 },
-                onChanged: (String) {
+                onChanged: (value) {
                   _amountController.text = valorReal(_amountController.text);
                 },
               ),
@@ -347,12 +347,7 @@ class _TransferScreenState extends State<TransferScreen> {
                       );
                     }).toList(),
                     onChanged: onChanged,
-                    validator: (val) {
-                      if (val == null) {
-                        return errorMessage;
-                      }
-                      return null;
-                    },
+                    validator: (val) => val == null ? errorMessage : null,
                   ),
                 ),
               );
